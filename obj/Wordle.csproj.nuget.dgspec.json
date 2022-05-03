@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/Users/manjitsingh/Downloads/Wordle/Wordle.csproj": {}
+    "C:\\Users\\DELL\\OneDrive\\Documents\\Rajvir Manjit Work\\Wordle\\Wordle.csproj": {}
   },
   "projects": {
-    "/Users/manjitsingh/Downloads/Wordle/Wordle.csproj": {
+    "C:\\Users\\DELL\\OneDrive\\Documents\\Rajvir Manjit Work\\Wordle\\Wordle.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/manjitsingh/Downloads/Wordle/Wordle.csproj",
+        "projectUniqueName": "C:\\Users\\DELL\\OneDrive\\Documents\\Rajvir Manjit Work\\Wordle\\Wordle.csproj",
         "projectName": "Wordle",
-        "projectPath": "/Users/manjitsingh/Downloads/Wordle/Wordle.csproj",
-        "packagesPath": "/Users/manjitsingh/.nuget/packages/",
-        "outputPath": "/Users/manjitsingh/Downloads/Wordle/obj/",
+        "projectPath": "C:\\Users\\DELL\\OneDrive\\Documents\\Rajvir Manjit Work\\Wordle\\Wordle.csproj",
+        "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\DELL\\OneDrive\\Documents\\Rajvir Manjit Work\\Wordle\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/manjitsingh/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net6.0-windows"
+          "net6.0-windows7.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -55,7 +57,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "/Users/manjitsingh/.dotnet/sdk/6.0.202/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }

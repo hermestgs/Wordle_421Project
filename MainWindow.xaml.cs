@@ -12,10 +12,52 @@ namespace Wordle
 {
     public partial class MainWindow : Window
     {
+
         // Global Variables
         int CurrentRow = 0; // CurrentRow helps in keeping track of the row in which user is currently typing in
         int CurrentColumn = 0; // CurrentColumn helps in keeping track of the column or letter block on which user currently is
         string CurrentWinningWord = ""; // CurrentWinningWord is the word that user needs to guess
+
+        interface IFilterInterface
+        {
+            public bool Check(string Character, int Index = 0, string MatchingWord = "");
+        }
+
+        // CheckIsWordValid class checks if given word exists in the word list, and returns a boolean value
+        public class CheckIsWordValid : IFilterInterface
+        {
+            public bool Check(string Word, int Index, string MatchingWord)
+            {
+                // Loops through each line
+                foreach (string line in File.ReadLines("./valid-words.txt"))
+                {
+                    // return true, if given word matches a word in the file
+                    if (Word.ToLower().Trim() == line.ToLower().Trim())
+                    {
+                        return true;
+                    };
+                }
+
+                return false;
+            }
+        }
+
+        // Check if a letter is in correct position if it is then return true else false
+        public class GreenBlockFilter : IFilterInterface
+        {
+            public bool Check(string InputWord, int Index, string WinningWord)
+            {
+                return InputWord[Index].ToString().ToLower() == WinningWord[Index].ToString().ToLower();
+            }
+        }
+        // If letter is not in correct place, but it does exists in the winning word then return true else false
+        public class YellowBlockFilter : IFilterInterface
+        {
+            public bool Check(string InputWord, int Index, string WinningWord)
+            {
+                return WinningWord.ToLower().Contains(InputWord[Index].ToString().ToLower());
+            }
+        }
 
         public MainWindow()
         {
@@ -93,27 +135,14 @@ namespace Wordle
             }
         }
 
-        // CheckIsWordValid function checks if given word exists in the word list, and returns a boolean value
-        private static bool CheckIsWordValid(string Word)
-        {
-            // Loops through each line
-            foreach (string line in File.ReadLines("./valid-words.txt"))
-            {
-                // return true, if given word matches a word in the file
-                if (Word.ToLower().Trim() == line.ToLower().Trim())
-                {
-                    return true;
-                };
-            }
-            
-            return false;
-        }
-
         // ColorTheColumns function changes the Foreground, BorderBrush, and Background of columns in a row
         private void ColorTheColumns(string InputWord, string CorrectWord)
         {
             int index = 0;
-         
+            GreenBlockFilter greenBlockFilter = new();
+            YellowBlockFilter yellowBlockFilter = new();
+
+
             MyGrid.Children.Cast<UIElement>().ToList().ForEach(e =>
             {
                 // If a UIElement in MyGrid is TextBlock in the current row, then change it's foreground to white
@@ -125,7 +154,7 @@ namespace Wordle
                 if (e is Border border && Grid.GetRow(e) == CurrentRow)
                 {
                     // Check if a letter is in correct position if it is then change it's color to green
-                    if (InputWord[index].ToString().ToLower() == CorrectWord[index].ToString().ToLower())
+                    if (greenBlockFilter.Check(InputWord, index, CorrectWord))
                     {
                         border.BorderBrush = new SolidColorBrush(Color.FromRgb(90, 212, 24));
                         border.Background = new SolidColorBrush(Color.FromRgb(90, 212, 24));
@@ -136,7 +165,7 @@ namespace Wordle
                         CorrectWord = regex.Replace(CorrectWord, " ", 1);
                     }
                     // If letter is not in correct place, but it does exists in the winning word then change it's color to yellow
-                    else if (CorrectWord.ToLower().Contains(InputWord[index].ToString().ToLower()))
+                    else if (yellowBlockFilter.Check(InputWord, index, CorrectWord))
                     {
                         border.BorderBrush = new SolidColorBrush(Colors.Goldenrod);
                         border.Background = new SolidColorBrush(Colors.Goldenrod);
@@ -164,6 +193,7 @@ namespace Wordle
             string InputWord = "";
             // CorrectWord is a dulicate of CurrentWinningWord
             string CorrectWord = CurrentWinningWord;
+            CheckIsWordValid checkIsWordValid = new();
 
             // Looping through MyGrid, and if a element is TextBlock in CurrentRow then add it's text to InputWord
             MyGrid.Children.Cast<UIElement>().ToList().ForEach(e =>
@@ -175,7 +205,7 @@ namespace Wordle
             });
 
             // Checking if word exists in the word list
-            if (!CheckIsWordValid(InputWord))
+            if (!checkIsWordValid.Check(InputWord, 0,""))
             {
                 ErrorsLabel.Content = "Not in word list";
                 await Task.Delay(1000);
@@ -241,7 +271,7 @@ namespace Wordle
                 ErrorsLabel.Content = "";
                 CustomWordInputBox.Text = "";
                 ErrorsLabel.Foreground = new SolidColorBrush(Colors.Red);
-                
+
                 // Removing key listener, to prevent a bug from listening key presses while user types for custom word in TextBox
                 var window = Window.GetWindow(this);
                 window.KeyDown -= HandleKeyPress;
@@ -263,7 +293,7 @@ namespace Wordle
             // Using two to account for the empty next line at the end of the text file
             int randomLineNumber = random.Next(0, lines.Length - 2);
             CurrentWinningWord = lines[randomLineNumber].ToLower().Trim();
-            
+
             RandomWordORCustomWordDialogBox.Visibility = Visibility.Collapsed;
 
             var window = Window.GetWindow(this);
@@ -309,7 +339,8 @@ namespace Wordle
                 var window = Window.GetWindow(this);
                 window.KeyDown += HandleKeyPress;
             }
-            else{
+            else
+            {
                 // We are only accounting for the less words because we are having max character limit in the TextBox
                 CustomWordDialogErrorsLabel.Content = "Not enough letters";
                 await Task.Delay(2000);
